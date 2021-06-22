@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Webtalk v2019.1.1 (64-bit)
+# SW Build 2580384 on Sat Jun 29 08:12:21 MDT 2019
+# IP Build 2579722 on Sat Jun 29 11:35:40 MDT 2019
+# Start of session at: Tue Jun 22 13:25:37 2021
+# Process ID: 11916
+# Current directory: C:/Users/dylma/Documents/fpgaCNN
+# Command line: wbtcv.exe -mode batch -source C:/Users/dylma/Documents/fpgaCNN/.Xil/Vivado-19176-DESKTOP-VFUSE8P/webtalk/labtool_webtalk.tcl -notrace
+# Log file: C:/Users/dylma/Documents/fpgaCNN/webtalk.log
+# Journal file: C:/Users/dylma/Documents/fpgaCNN\webtalk.jou
+#-----------------------------------------------------------
+source C:/Users/dylma/Documents/fpgaCNN/.Xil/Vivado-19176-DESKTOP-VFUSE8P/webtalk/labtool_webtalk.tcl -notrace

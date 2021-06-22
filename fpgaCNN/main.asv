@@ -1,0 +1,45 @@
+% Deep learning on CNN
+% Premade network
+%% Program parameters
+trNet = false;      % Train neural network (only necessary if modified on .mat ...
+                    % file is lost
+genTestData = true; % Generate test data for FPGA / network testing
+reprogram = false;  
+%% Generate Data
+rng default
+[wav, modType] = helperGenerateRadarWaveforms();
+parentDir = tempdir;
+dataDir = 'TFDDatabase';
+helperGenerateTFDfiles(parentDir,dataDir,wav,modType,200e3)
+folders = fullfile(parentDir,dataDir,{'Rect','LFM','Barker','GFSK','CPFSK','B-FM','SSB-AM','DSB-AM'});
+imds = imageDatastore(folders,...
+    'FileExtensions','.png','LabelSource','foldernames','ReadFcn',@readTFDForSqueezeNet);
+[imdsTrain,imdsTest,imdsValidation] = splitEachLabel(imds,0.8,0.1);
+
+%% Train Network
+if trNet
+    trainSqueezeNetwork(imdsTrain, imdsValidation);
+end
+
+%% Load Network
+net = load('demodSqueezeNet.mat');
+snet = net.trainedNet;
+analyzeNetwork(snet)
+
+%% Program FPGA
+hdlsetuptoolpath('ToolName', 'Xilinx Vivado', 'ToolPath', 'C:\Xilinx\Vivado\2019.1\bin\vivado.bat');
+hTarget = dlhdl.Target('Xilinx');
+
+hW = dlhdl.Workflow('Network', snet, 'Bitstream', 'zc706_single','Target',hTarget);
+dn = hW.compile
+
+hW.deploy
+
+%% Test FPGA
+% grab image
+testImage = readimage(imdsTest,1);
+%imdsTest.Labels
+imshow(testImage)
+[prediction, speed] = hW.predict(testImage,'Profile','on')
+[val, idx] = max(prediction);
+fprintf('The prediction result is %d\n', idx-1);
